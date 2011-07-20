@@ -43,9 +43,9 @@ Multiple sources and destinations may be specified.
       raise "Not a directory: #{save_to}" unless File.directory? save_to
 
       mirror = Gem::Mirror.new(get_from, save_to)
-      
-      say "Fetching: #{mirror.from(Gem::Mirror::SPECS_FILE_Z)}"
-      mirror.update_specs
+
+      say "Fetching: #{mirror.from(Gem::Mirror::SPECS_FILE)}"
+      mirror.update_all_specs
 
       say "Total gems: #{mirror.gems.size}"
 
@@ -58,14 +58,15 @@ Multiple sources and destinations may be specified.
 
       mirror.update_gems { progress.updated true }
 
-      num_to_delete = mirror.gems_to_delete.size
 
-      progress = ui.progress_reporter num_to_delete,
-                                 "Deleting #{num_to_delete} gems"
-
-      trap(:INFO) { puts "Fetched: #{progress.count}/#{num_to_delete}" } if SUPPORTS_INFO_SIGNAL
-
-      mirror.delete_gems { progress.updated true }
+      # num_to_delete = mirror.gems_to_delete.size
+      #
+      # progress = ui.progress_reporter num_to_delete,
+      #                            "Deleting #{num_to_delete} gems"
+      #
+      # trap(:INFO) { puts "Fetched: #{progress.count}/#{num_to_delete}" } if SUPPORTS_INFO_SIGNAL
+      #
+      # mirror.delete_gems { progress.updated true }
     end
   end
 end
