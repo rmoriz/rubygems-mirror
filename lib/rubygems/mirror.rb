@@ -16,6 +16,7 @@ class Gem::Mirror
 
   def initialize(from = DEFAULT_URI, to = DEFAULT_TO, parallelism = 10)
     @from, @to = from, to
+    @to_tmp = '/tmp'
     @fetcher = Fetcher.new
     @pool = Pool.new(parallelism)
   end
@@ -28,11 +29,14 @@ class Gem::Mirror
     File.join(@to, *args)
   end
 
+  def to_tmp(*args)
+    File.join(@to_tmp, *args)
+  end
   def update_specs(filename = SPECS_FILE)
     filez = filename + '.gz'
-    specz = to(filez)
+    specz = to_tmp(filez)
     @fetcher.fetch(from(filez), specz)
-    open(to(filename), 'wb') { |f| f << Gem.gunzip(File.read(specz)) }
+    open(to_tmp(filename), 'wb') { |f| f << Gem.gunzip(File.read(specz)) }
   end
 
   def update_latest_specs(filename = LATEST_SPECS_FILE)
@@ -44,9 +48,9 @@ class Gem::Mirror
   end
 
   def gems
-    gems = Marshal.load(File.read(to(SPECS_FILE)))
-    gems += Marshal.load(File.read(to(PRERELEASE_SPECS_FILE)))
-    gems += Marshal.load(File.read(to(LATEST_SPECS_FILE)))
+    gems = Marshal.load(File.read(to_tmp(SPECS_FILE)))
+    gems += Marshal.load(File.read(to_tmp(PRERELEASE_SPECS_FILE)))
+    gems += Marshal.load(File.read(to_tmp(LATEST_SPECS_FILE)))
     gems.map! do |name, ver, plat|
       # If the platform is ruby, it is not in the gem name
       "#{name}-#{ver}#{"-#{plat}" unless plat == RUBY}.gem"

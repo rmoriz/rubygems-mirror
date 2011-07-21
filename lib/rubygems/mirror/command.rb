@@ -42,7 +42,7 @@ Multiple sources and destinations may be specified.
       raise "Directory not found: #{save_to}" unless File.exist? save_to
       raise "Not a directory: #{save_to}" unless File.directory? save_to
 
-      mirror = Gem::Mirror.new(get_from, save_to)
+      mirror = Gem::Mirror.new(get_from, save_to, 12)
 
       say "Fetching: #{mirror.from(Gem::Mirror::SPECS_FILE)}"
       mirror.update_all_specs
